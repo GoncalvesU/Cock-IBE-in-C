@@ -1,0 +1,50 @@
+Setup:
+	Génére deux nombres premiers p et q différent et tq p*q est de taille lembda bits. 
+ *          s_c->p = p
+ *          s_c->q = q
+ *          s_c->N = p*q
+ *      (a/b) est le symbole de jacobi de a par b 
+ *      Génére un nombre mu tel que (mu/p) = (mu/q) = -1
+ *          s_c->mu = mu
+
+extract:
+ *	Utilisation de la fonction de hachage sha256 sur id
+ *      JN est l'ensemble tq {x | x appartient Zn et (x/N) = 1}
+ *		s_c->a = (s_c->f_hachage)(id) [s_c->N]
+ *
+ *      Si s_c->a n'appartient a JN alors
+ *          on génere alpha tq (alpha/N) = -1
+ *          s_c->a <- (s_c->a)*alpha
+ *      Si (a/s_c->p) = 1 alors
+ *		on génére un r tq r²= a [N]
+ *			pour générer un tel r on doit utiliser le théorême des restes chinois
+ *			On a r = upt + vqs mod N
+ *			avec u et v qui sont les identités de bezou de respectivement p et q,
+ *			les nombres premiers composant N et 
+ *			r² = s² = a [p] et r² = t² = a [q] 
+ *      	s_c->r = r
+ *          sc->square = 1
+ *      sinon
+ * 			on génére un r tq r²= a*s_c->mu [N]
+ *			pour générer un tel r on doit utiliser le théorême des restes chinois
+ *			On a r = upt + vqs mod N
+ *			avec u et v qui sont les identités de bezou de respectivement p et q,
+ *			les nombres premiers composant N et 
+ *			r² = s² = a*s_c->mu [p] et r² = t² = a*s_c->mu [q] 
+ *	    	sc->square = 0
+ *	
+
+Pour m on va faire (-1) puissance m
+
+encrypt:
+
+	on génére t1 et t2 différent tq (t1/N) = (t2/N) = m
+	c1 = t1 + a*(t1-1) mod N
+	c2 = t2 + cs_mu*a*(t2-1) mod N
+
+decrypt:
+
+	si s_c->square alors
+		retourne (c1+2r/N)
+	sinon
+		retourn (c2+2r/N)
